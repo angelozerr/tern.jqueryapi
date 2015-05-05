@@ -1,0 +1,368 @@
+<?xml version="1.0"?>
+<entry name="selectmenu" type="widget">
+	<title>Selectmenu Widget</title>
+	<desc>Duplicates and extends the functionality of a native HTML select element to overcome the limitations of the native control.</desc>
+	<longdesc>
+		<p>Selectmenu transforms a <code>&lt;select&gt;</code> element into a themeable and customizable control. The widget acts as a proxy to the original <code>&lt;select&gt;</code>; therefore the original element's state is maintained for form submission and serialization.</p>
+
+		<p>Selectmenu supports <code>&lt;optgroup&gt;</code> elements and custom markup to render specific presentations like multiple lines. The <code>&lt;select&gt;</code> and its options can be disabled by adding a <code>disabled</code> attribute.</p>
+
+		<div class="warning"><p>
+			<strong>Note:</strong> Support for <code>accesskey</code> on custom elements is extremely limited in browsers. As such, if there is an <code>accesskey</code> attribute on the <code>&lt;select&gt;</code> element, it will not work with the custom selectmenu. If there is an <code>accesskey</code> attribute on any of the <code>&lt;option&gt;</code> elements, using the accesskey may cause the original element and the custom element to be out of sync. However, most browsers don't support <code>accesskey</code> on <code>&lt;option&gt;</code> elements.
+		</p></div>
+
+		<h3>Keyboard interaction</h3>
+
+		<p>When the menu is open, the following key commands are available:</p>
+		<ul>
+			<li><code>UP</code>/<code>LEFT</code>: Move focus to the previous item.</li>
+			<li><code>DOWN</code>/<code>RIGHT</code>: Move focus to the next item.</li>
+			<li><code>END</code>/<code>PAGE DOWN</code>: Move focus to the last item.</li>
+			<li><code>HOME</code>/<code>PAGE UP</code>: Move focus to the first item.</li>
+			<li><code>ESCAPE</code>: Close the menu.</li>
+			<li><code>ENTER</code>/<code>SPACE</code>: Select the currently focused item and close the menu.</li>
+			<li><code>ALT</code>/<code>OPTION</code> + <code>UP</code>/<code>DOWN</code>: Toggle the visibility of the menu.</li>
+		</ul>
+
+		<p>When the menu is closed, the following key commands are available:</p>
+		<ul>
+			<li><code>UP</code>/<code>LEFT</code>: Select the previous item.</li>
+			<li><code>DOWN</code>/<code>RIGHT</code>: Select the next item.</li>
+			<li><code>END</code>/<code>PAGE DOWN</code>: Select the last item.</li>
+			<li><code>HOME</code>/<code>PAGE UP</code>: Select the first item.</li>
+			<li><code>ALT</code>/<code>OPTION</code> + <code>UP</code>/<code>DOWN</code>: Toggle the visibility of the menu.</li>
+			<li><code>SPACE</code>: Open the menu.</li>
+		</ul>
+
+		<xi:include href="../includes/widget-theming.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+
+		<ul>
+			<li>
+				<code>ui-selectmenu-button</code>: The button-like element replacing the native selectmenu on the page. Has the <code>ui-selectmenu-button-closed</code> class when closed, the <code>ui-selectmenu-button-open</code> class when open.
+				<ul>
+					<li><code>ui-selectmenu-text</code>: The span representing the text portion of the button element.</li>
+					<li><code>ui-selectmenu-icon-space</code>: A supporting element between the text and the icon of the selectmenu button.</li>
+				</ul>
+			</li>
+			<li>
+				<code>ui-selectmenu-menu</code>: The wrapper element around the <a href="/menu/#theming">menu</a> used to display options to the user (not the menu itself). When the menu is open, the <code>ui-selectmenu-open</code> class is added.
+				<ul>
+					<li><code>ui-selectmenu-optgroup</code>: One of the elements that replicates <code>&lt;optgroup&gt;</code> elements from native selects.</li>
+				</ul>
+			</li>
+
+		</ul>
+
+		<h3>Dependencies</h3>
+		<ul>
+			<li><a href="/category/ui-core/">UI Core</a></li>
+			<li><a href="/jQuery.widget/">Widget Factory</a></li>
+			<li><a href="/position/">Position</a></li>
+			<li><a href="/menu/">Menu</a></li>
+		</ul>
+	</longdesc>
+	<note id="functional-css"/>
+	<added>1.11</added>
+	<options>
+		<option name="appendTo" type="Selector" default="null" example-value='"#someElem"'>
+			<desc>Which element to append the menu to. When the value is <code>null</code>, the parents of the <code>&lt;select&gt;</code> are checked for a class name of <code>ui-front</code>. If an element with the <code>ui-front</code> class name is found, the menu is appended to that element. Regardless of the value, if no element is found, the menu is appended to the body.</desc>
+		</option>
+		<option name="classes" type="Object">
+			<default>{
+	"ui-selectmenu-button-closed": "ui-corner-all",
+	"ui-selectmenu-button-open": "ui-corner-top",
+}</default>
+			<xi:include href="../includes/classes-option-desc.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+			<xi:include href="../includes/classes-option-example.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+		</option>
+		<xi:include href="../includes/widget-option-disabled.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+		<option name="icons" type="Object" default='{ button: "ui-icon-triangle-1-s" }' example-value='{ button: "ui-icon-circle-triangle-s" }'>
+			<desc>
+				Icons to use for the button, matching <a href="/theming/icons/">an icon defined by the jQuery UI CSS Framework</a>.
+				<ul>
+					<li>button (string, default: "ui-icon-triangle-1-s")</li>
+				</ul>
+			</desc>
+		</option>
+		<option name="position" type="Object" default='{ my: "left top", at: "left bottom", collision: "none" }' example-value='{ my : "left+10 center", at: "right center" }'>
+			<desc>Identifies the position of the menu in relation to the associated button element. You can refer to the <a href="/position/">jQuery UI Position</a> utility for more details about the various options.</desc>
+		</option>
+		<option name="width" default="false" example-value="200">
+			<desc>The width of the menu, in pixels. When the value is <code>null</code>, the width of the native select is used. When the value is <code>false</code>, no inline style will be set for the width, allowing the width to be set in a stylesheet.</desc>
+			<type name="Number" />
+			<type name="Boolean" />
+		</option>
+	</options>
+	<events>
+		<event name="change">
+			<desc>Triggered when the selected item has changed. Not every <a href="#event-select"><code>select</code></a> event will fire a <code>change</code> event.</desc>
+			<argument name="event" type="Event"/>
+			<argument name="ui" type="Object">
+				<property name="item" type="jQuery">
+					<desc>The active item.</desc>
+				</property>
+			</argument>
+		</event>
+		<event name="close">
+			<desc>Triggered when the menu is hidden.</desc>
+			<argument name="event" type="Event"/>
+		</event>
+		<xi:include href="../includes/widget-event-create.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+		<event name="focus">
+			<desc>
+				Triggered when an items gains focus.
+			</desc>
+			<argument name="event" type="Event"/>
+			<argument name="ui" type="Object">
+				<property name="item" type="jQuery">
+					<desc>The focused item.</desc>
+				</property>
+			</argument>
+		</event>
+		<event name="open">
+			<desc>Triggered when the menu is opened.</desc>
+			<argument name="event" type="Event"/>
+		</event>
+		<event name="select">
+			<desc>
+				Triggered when a menu item is selected.
+			</desc>
+			<argument name="event" type="Event"/>
+			<argument name="ui" type="Object">
+				<property name="item" type="jQuery">
+					<desc>The selected item.</desc>
+				</property>
+			</argument>
+		</event>
+	</events>
+	<methods>
+		<method name="close">
+			<desc>Closes the menu.</desc>
+		</method>
+		<xi:include href="../includes/widget-method-destroy.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+		<xi:include href="../includes/widget-method-disable.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+		<xi:include href="../includes/widget-method-enable.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+		<xi:include href="../includes/widget-method-instance.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+		<method name="menuWidget">
+			<desc>Returns a <code>jQuery</code> object containing the menu element.</desc>
+		</method>
+		<method name="open">
+			<desc>Opens the menu.</desc>
+		</method>
+		<xi:include href="../includes/widget-method-option.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+		<method name="refresh">
+			<desc>
+				Parses the original element and re-renders the menu. Processes any <code>&lt;option&gt;</code> or <code>&lt;optgroup&gt;</code> elements that were added, removed or disabled.
+			</desc>
+		</method>
+		<method name="widget">
+			<desc>Returns a <code>jQuery</code> object containing the button element.</desc>
+		</method>
+	</methods>
+	<extension-points>
+		<method name="_renderItem" return="jQuery">
+			<desc>
+				<p>Method that controls the creation of each option in the widget's menu. The method must create a new <code>&lt;li&gt;</code> element, append it to the menu, and return it.</p>
+			</desc>
+			<argument name="ul" type="jQuery">
+				<desc>The <code>&lt;ul&gt;</code> element that the newly created <code>&lt;li&gt;</code> element must be appended to.</desc>
+			</argument>
+			<argument name="item" type="Object">
+				<property name="element" type="jQuery">
+					<desc>The original <code>&lt;option&gt;</code> element.</desc>
+				</property>
+				<property name="index" type="Integer">
+					<desc>The index of the <code>&lt;option&gt;</code> within the <code>&lt;select&gt;</code>.</desc>
+				</property>
+				<property name="value" type="String">
+					<desc>The value of the <code>&lt;option&gt;</code>.</desc>
+				</property>
+				<property name="label" type="String">
+					<desc>The label of the <code>&lt;option&gt;</code>.</desc>
+				</property>
+				<property name="optgroup" type="String">
+					<desc>The label for the parent <code>optgroup</code>, if any.</desc>
+				</property>
+				<property name="disabled" type="Boolean">
+					<desc>Whether the <code>&lt;option&gt;</code> is disabled.</desc>
+				</property>
+			</argument>
+			<example>
+				<desc>Style the menu item background colors based on the value of their corresponding option elements.</desc>
+				<code><![CDATA[
+_renderItem: function( ul, item ) {
+	var li = $( "<li>" )
+		.css( "background-color", item.value );
+
+	if ( item.disabled ) {
+		li.addClass( "ui-state-disabled" );
+	}
+
+	this._setText( li, item.label );
+
+	return li.appendTo( ul );
+}
+]]></code>
+			</example>
+		</method>
+		<method name="_renderMenu">
+			<desc>
+				Method that controls building the widget's menu. The method is passed an empty <code>&lt;ul&gt;</code> and an array of items based on the <code>&lt;option&gt;</code> elements in the original <code>&lt;select&gt;</code>. Creation of the individual <code>&lt;li&gt;</code> elements should be delegated to <code>_renderItemData()</code>, which in turn delegates to the <a href="#method-_renderItem"><code>_renderItem()</code></a> extension point.
+			</desc>
+			<argument name="ul" type="jQuery">
+				<desc>An empty <code>&lt;ul&gt;</code> element to use as the widget's menu.</desc>
+			</argument>
+			<argument name="items" type="Array">
+				<desc>An array of items based on the <code>&lt;option&gt;</code> elements in the original <code>&lt;select&gt;</code>. See the <a href="#method-_renderItem"><code>_renderItem()</code></a> extension point for details on the format of the item objects.</desc>
+			</argument>
+			<example>
+				<desc>
+					<p>Add a CSS class name to the odd menu items.</p>
+					<div class="warning"><strong>Note:</strong> For simplicity, this example does not support optgroups or disabled menu items.</div>
+				</desc>
+				<code><![CDATA[
+_renderMenu: function( ul, items ) {
+	var that = this;
+	$.each( items, function( index, item ) {
+		that._renderItemData( ul, item );
+	});
+	$( ul ).find( "li:odd" ).addClass( "odd" );
+}
+]]></code>
+			</example>
+		</method>
+		<method name="_resizeMenu">
+			<desc>Method responsible for sizing the menu before it is displayed. The menu element is available at <code>this.menu</code>.</desc>
+			<example>
+				<desc>Always display the menu as 500 pixels wide.</desc>
+				<code><![CDATA[
+_resizeMenu: function() {
+	this.menu.outerWidth( 500 );
+}
+]]></code>
+			</example>
+		</method>
+		<method name="_renderButtonItem" return="jQuery">
+			<desc>
+				<p>Method that controls the creation of the generated button content. The method must create and return a new element.</p>
+			</desc>
+			<argument name="item" type="Object">
+				<property name="disabled" type="Boolean">
+					<desc>Whether the item is disabled.</desc>
+				</property>
+				<property name="element" type="jQuery">
+					<desc>A reference to the item's original <code>&lt;option&gt;</code> element.</desc>
+				</property>
+				<property name="index" type="Number">
+					<desc>The numeric index of the item.</desc>
+				</property>
+				<property name="label" type="String">
+					<desc>The string to display for the item.</desc>
+				</property>
+				<property name="optgroup" type="String">
+					<desc>If the item is within an <code>&lt;optgroup&gt;</code>, this is set to that <code>&lt;optgroup&gt;</code>'s label.</desc>
+				</property>
+				<property name="value" type="String">
+					<desc>The <code>value</code> attribute of the item's original <code>&lt;option&gt;</code>.</desc>
+				</property>
+			</argument>
+			<example>
+				<desc>Style the button background color based on the value of the selected option.</desc>
+				<code><![CDATA[
+_renderButtonItem: function( item ) {
+	var buttonItem = $( "<span>", {
+		"class": "ui-selectmenu-text"
+	})
+	this._setText( buttonItem, item.label );
+
+	buttonItem.css( "background-color", item.value )
+
+	return buttonItem;
+}
+]]></code>
+			</example>
+		</method>
+	</extension-points>
+	<example>
+		<desc>A simple jQuery UI Selectmenu</desc>
+		<code><![CDATA[
+$( "#speed" ).selectmenu();
+]]></code>
+		<html><![CDATA[
+<label for="speed">Select a speed:</label>
+<select name="speed" id="speed">
+	<option value="Slower">Slower</option>
+	<option value="Slow">Slow</option>
+	<option value="Medium" selected>Medium</option>
+	<option value="Fast">Fast</option>
+	<option value="Faster">Faster</option>
+</select>
+]]></html>
+	<css><![CDATA[
+	label { display: block; }
+	select { width: 200px; }
+]]></css>
+	</example>
+	<example>
+		<desc>A simple jQuery UI Selectmenu with optgroups</desc>
+		<code><![CDATA[
+$( "#files" ).selectmenu();
+]]></code>
+		<html><![CDATA[
+<label for="files">Select a file:</label>
+<select name="files" id="files">
+	<optgroup label="Scripts">
+		<option value="jquery">jQuery.js</option>
+		<option value="jqueryui">ui.jQuery.js</option>
+	</optgroup>
+	<optgroup label="Other files">
+		<option value="somefile">Some unknown file</option>
+		<option value="someotherfile">Some other file</option>
+	</optgroup>
+</select>
+]]></html>
+	<css><![CDATA[
+	label { display: block; }
+	select { width: 200px; }
+]]></css>
+	</example>
+	<example>
+		<desc>A jQuery UI Selectmenu with overflow</desc>
+		<code><![CDATA[
+$( "#number" )
+	.selectmenu()
+	.selectmenu( "menuWidget" )
+		.addClass( "overflow" );
+]]></code>
+		<html><![CDATA[
+<label for="number">Select a number:</label>
+<select name="number" id="number">
+	<option value="1">1</option>
+	<option value="2" selected>2</option>
+	<option value="3">3</option>
+	<option value="4">4</option>
+	<option value="5">5</option>
+	<option value="6">6</option>
+	<option value="7">7</option>
+	<option value="8">8</option>
+	<option value="9">9</option>
+	<option value="10">10</option>
+	<option value="11">11</option>
+	<option value="12">12</option>
+	<option value="13">13</option>
+	<option value="14">14</option>
+	<option value="15">15</option>
+	<option value="16">16</option>
+	<option value="17">17</option>
+	<option value="18">18</option>
+	<option value="19">19</option>
+</select>
+]]></html>
+	<css><![CDATA[
+	label { display: block; }
+	select { width: 200px; }
+	.overflow { height: 200px; }
+]]></css>
+	</example>
+	<category slug="widgets"/>
+</entry>

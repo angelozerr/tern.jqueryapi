@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<entry name="progressbar" type="widget" widget-element="progressbar">
+	<title>Progressbar Widget</title>
+	<desc>Display status of a determinate or indeterminate process.</desc>
+	<longdesc>
+		<p>
+			The progress bar is designed to display the current percent complete for a process. The bar is coded to be flexibly sized through CSS and will scale to fit inside its parent container by default.
+		</p>
+		<p>
+			A determinate progress bar should only be used in situations where the system can accurately update the current status. A determinate progress bar should never fill from left to right, then loop back to empty for a single process &#8212; if the actual status cannot be calculated, an indeterminate progress bar should be used to provide user feedback.
+		</p>
+
+		<xi:include href="../includes/widget-theming.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+
+		<ul>
+			<li>
+				<code>ui-progressbar</code>: The outer container of the progressbar. This element will additionally have a class of <code>ui-progressbar-indeterminate</code> for indeterminate progressbars. For determinate progressbars, the <code>ui-progressbar-complete</code> class is added once the maximum value is reached.
+				<ul>
+					<li>
+						<code>ui-progressbar-value</code>: The element that represents the filled portion of the progressbar.
+						<ul>
+							<li><code>ui-progressbar-overlay</code>: Overlay used to display an animation for indeterminate progressbars.</li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+		</ul>
+
+		<h3>Dependencies</h3>
+		<ul>
+			<li><a href="/category/ui-core/">UI Core</a></li>
+			<li><a href="/jQuery.widget/">Widget Factory</a></li>
+		</ul>
+	</longdesc>
+	<note id="functional-css"/>
+	<added>1.6</added>
+	<options>
+		<option name="classes" type="Object">
+			<default>{
+	"ui-progressbar": "ui-corner-all",
+	"ui-progressbar-complete": "ui-corner-right",
+	"ui-progressbar-value": "ui-corner-left"
+}</default>
+			<xi:include href="../includes/classes-option-desc.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+			<xi:include href="../includes/classes-option-example.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+		</option>
+		<xi:include href="../includes/widget-option-disabled.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+		<option name="max" default="100" type="Number" example-value="1024">
+			<desc>The maximum value of the progressbar.</desc>
+		</option>
+		<option name="value" default="0" example-value="25">
+			<desc>The value of the progressbar.</desc>
+			<type name="Number">
+				<desc>
+					A value between <code>0</code> and the <a href="#option-max"><code>max</code></a>.
+				</desc>
+			</type>
+			<type name="Boolean">
+				<desc>
+					Value can be set to <code>false</code> to create an indeterminate progressbar.
+				</desc>
+			</type>
+		</option>
+	</options>
+	<events>
+		<event name="change">
+			<desc>Triggered when the value of the progressbar changes.</desc>
+			<argument name="event" type="Event"/>
+			<argument name="ui" type="Object"/>
+		</event>
+		<xi:include href="../includes/widget-event-create.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+		<event name="complete">
+			<desc>Triggered when the value of the progressbar reaches the maximum value.</desc>
+			<argument name="event" type="Event"/>
+			<argument name="ui" type="Object"/>
+		</event>
+	</events>
+	<methods>
+		<xi:include href="../includes/widget-method-destroy.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+		<xi:include href="../includes/widget-method-disable.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+		<xi:include href="../includes/widget-method-enable.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+		<xi:include href="../includes/widget-method-instance.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+		<xi:include href="../includes/widget-method-option.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+		<method name="value">
+			<desc>Gets or sets the current value of the progressbar.</desc>
+			<signature example-return-var="progressSoFar">
+				<return type="Number"/>
+				<return type="Boolean"/>
+				<desc>Gets the current value of the progressbar.</desc>
+			</signature>
+			<signature example-params='50'>
+				<desc>Sets the current value of the progressbar.</desc>
+				<argument name="value">
+					<desc>The value to set. See the <a href="#option-value"><code>value</code></a> option for details on valid values.</desc>
+					<type name="Number"/>
+					<type name="Boolean"/>
+				</argument>
+			</signature>
+		</method>
+		<xi:include href="../includes/widget-method-widget.xml" xmlns:xi="http://www.w3.org/2003/XInclude"/>
+	</methods>
+	<example>
+		<height>50</height>
+		<desc>A simple jQuery UI Progressbar</desc>
+		<code><![CDATA[
+$( "#progressbar" ).progressbar({
+	value: 37
+});
+]]></code>
+		<html><![CDATA[
+<div id="progressbar"></div>
+]]></html>
+	</example>
+	<example>
+		<height>50</height>
+		<desc>A simple jQuery UI Indeterminate Progressbar</desc>
+		<code><![CDATA[
+$( "#progressbar" ).progressbar({
+	value: false
+});
+]]></code>
+		<html><![CDATA[
+<div id="progressbar"></div>
+]]></html>
+	</example>
+	<category slug="widgets"/>
+</entry>

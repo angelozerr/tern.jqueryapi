@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<entry name="shake" type="effect">
+	<title>Shake Effect</title>
+	<desc>Shakes the element multiple times, vertically or horizontally.</desc>
+	<arguments>
+		<argument name="direction" type="String" default='"left"'>
+			<desc>A value of <code>"left"</code> or <code>"right"</code> will shake the element horizontally, and a value of <code>"up"</code> or <code>"down"</code> will shake the element vertically. The value specifies which direction the element should move along the axis for the first step of the effect.</desc>
+		</argument>
+		<argument name="distance" type="Number" default="20">
+			<desc>Distance to shake.</desc>
+		</argument>
+		<argument name="times" type="Integer" default="3">
+			<desc>Times to shake.</desc>
+		</argument>
+	</arguments>
+	<example>
+		<height>200</height>
+		<desc>Shake a div.</desc>
+		<css><![CDATA[
+	#toggle {
+		width: 100px;
+		height: 100px;
+		background: #ccc;
+	}
+]]></css>
+		<code><![CDATA[
+$( document ).click(function() {
+	$( "#toggle" ).effect( "shake" );
+});
+]]></code>
+		<html><![CDATA[
+<p>Click anywhere to shake the box.</p>
+<div id="toggle"></div>
+]]></html>
+	</example>
+	<category slug="effects"/>
+</entry>
