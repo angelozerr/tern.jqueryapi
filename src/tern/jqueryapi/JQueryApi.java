@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -16,12 +18,12 @@ public class JQueryApi {
 
 	private final String name;
 	private final String version;
-	private final Collection<Entry> entries;
+	private final Map<String, JQueryClass> classes;
 
 	public JQueryApi(String name, String version) {
 		this.name = name;
 		this.version = version;
-		this.entries = new ArrayList<Entry>();
+		this.classes = new HashMap<String, JQueryClass>();
 	}
 
 	public void loadEntry(InputStream in) throws SAXException, IOException,
@@ -39,8 +41,12 @@ public class JQueryApi {
 		saxReader.parse(new InputSource(in), handler);
 	}
 
-	public void addEntry(Entry entry) {
-		entries.add(entry);
+	public void addClass(JQueryClass clazz) {
+		classes.put(clazz.getClassName(), clazz);
+	}
+
+	public JQueryClass getClass(String className) {
+		return classes.get(className);
 	}
 
 	public String getName() {
@@ -51,7 +57,8 @@ public class JQueryApi {
 		return version;
 	}
 
-	public Collection<Entry> getEntries() {
-		return entries;
+	public Collection<JQueryClass> getClasses() {
+		return classes.values();
 	}
+
 }

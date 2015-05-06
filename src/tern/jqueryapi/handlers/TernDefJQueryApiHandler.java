@@ -3,7 +3,10 @@ package tern.jqueryapi.handlers;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.util.List;
 
+import tern.jqueryapi.JQueryMethod;
+import tern.jqueryapi.JQueryParameter;
 import tern.jqueryapi.utils.StringUtils;
 
 import com.eclipsesource.json.JsonObject;
@@ -38,9 +41,9 @@ public class TernDefJQueryApiHandler extends AbstractJQueryApiHandler {
 
 	@Override
 	public void startClass(String name, String superclass,
-			boolean objectLiteral, String description, String url)
+			boolean privateClass, String description, String url)
 			throws IOException {
-		this.ternClass = getTernClass(name, objectLiteral ? define : def);
+		this.ternClass = getTernClass(name, privateClass ? define : def);
 		if (!StringUtils.isEmpty(superclass)) {
 			ternClass.set("!proto", superclass);
 		}
@@ -59,6 +62,74 @@ public class TernDefJQueryApiHandler extends AbstractJQueryApiHandler {
 	@Override
 	public void endClass() throws IOException {
 		this.ternClass = null;
+	}
+
+	@Override
+	public void handleMethod(JQueryMethod method) {
+		JsonObject ternItem = getTernClassOrPrototype(ternClass, method);
+		String type = getType(method);
+		if (!StringUtils.isEmpty(type)) {
+			ternItem.set("!type", type);
+		}
+		String doc = method.getDescription();
+		String url = method.getUrl();
+		addDocAndUrl(ternItem, doc, url);
+	}
+
+	private String getType(JQueryMethod method) {
+		StringBuilder type = new StringBuilder("fn(");
+
+		List<JQueryParameter> parameters = method.getParameters();
+		for (int i = 0; i < parameters.size(); i++) {
+			JQueryParameter parameter = parameters.get(i);
+			if (i > 0) {
+				type.append(", ");
+			}
+			type.append(parameter.getName());
+			if (parameter.isOptional()) {
+				type.append("?");
+			}
+			type.append(": ");
+			type.append(getType(parameter.getType()));
+
+		}
+
+		type.append(")");
+		if (method.hasReturnValue()) {
+			String returnValue = method.getReturnValue();
+			type.append(" -> ");
+			type.append(getType(returnValue));
+		}
+		return type.toString();
+	}
+
+	private String getType(String returnValue) {
+		if ("this".equals(returnValue)) {
+			return "!this";
+		}
+		return returnValue;
+	}
+
+	private JsonObject getTernClassOrPrototype(JsonObject ternClass,
+			JQueryMethod method) {
+		// constructor
+		/*
+		 * if (method.isConstructor()) { return ternClass; }
+		 */
+		// static Method
+		if (method.isStaticMethod()) {
+			JsonObject staticMethod = new JsonObject();
+			ternClass.set(method.getName(), staticMethod);
+			return staticMethod;
+		}
+		JsonObject prototype = (JsonObject) ternClass.get("prototype");
+		if (prototype == null) {
+			prototype = new JsonObject();
+			ternClass.set("prototype", prototype);
+		}
+		JsonObject prototypeMethod = new JsonObject();
+		prototype.set(method.getName(), prototypeMethod);
+		return prototypeMethod;
 	}
 
 	private JsonObject getTernClass(String name, JsonObject parent) {

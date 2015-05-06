@@ -28,15 +28,19 @@ public class JQueryApiHelper {
 			throws IOException {
 		visitor.startApi(api.getName(), api.getVersion());
 		// Loop for entries
-		String className = null;
-		Collection<Entry> entries = api.getEntries();
-		for (Entry entry : entries) {
-			className = entry.getClassName();
-			if (className != null) {
-				visitor.startClass(className, entry.getSuperclass(), true,
-						entry.getDesc(), entry.getUrl());
-				visitor.endClass();
+		Collection<JQueryClass> classes = api.getClasses();
+		for (JQueryClass clazz : classes) {
+			visitor.startClass(clazz.getClassName(), clazz.getSuperClass(),
+					clazz.isPrivateClass(), clazz.getDescription(),
+					clazz.getUrl());
+
+			// Loop for methods
+			Collection<JQueryMethod> methods = clazz.getMethods();
+			for (JQueryMethod method : methods) {
+				visitor.handleMethod(method);
 			}
+
+			visitor.endClass();
 		}
 		visitor.endApi();
 	}
