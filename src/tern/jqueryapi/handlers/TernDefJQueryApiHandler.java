@@ -3,10 +3,12 @@ package tern.jqueryapi.handlers;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.List;
 
 import tern.jqueryapi.JQueryMethod;
 import tern.jqueryapi.JQueryParameter;
+import tern.jqueryapi.JQueryProperty;
 import tern.jqueryapi.utils.StringUtils;
 
 import com.eclipsesource.json.JsonObject;
@@ -66,7 +68,8 @@ public class TernDefJQueryApiHandler extends AbstractJQueryApiHandler {
 
 	@Override
 	public void handleMethod(JQueryMethod method) {
-		JsonObject ternItem = getTernClassOrPrototype(ternClass, method);
+		JsonObject ternItem = getTernClassOrPrototype(ternClass,
+				method.getName(), method.isStaticMethod());
 		String type = getType(method);
 		if (!StringUtils.isEmpty(type)) {
 			ternItem.set("!type", type);
@@ -107,19 +110,37 @@ public class TernDefJQueryApiHandler extends AbstractJQueryApiHandler {
 		if ("this".equals(returnValue)) {
 			return "!this";
 		}
-		return returnValue;
+		if ("Boolean".equalsIgnoreCase(returnValue)) {
+			return "bool";
+		}
+		if ("Number".equalsIgnoreCase(returnValue) || "Integer".equalsIgnoreCase(returnValue)) {
+			return "number";
+		}
+		if ("String".equalsIgnoreCase(returnValue)) {
+			return "string";
+		}
+		if ("Object".equalsIgnoreCase(returnValue)) {
+			return "?";
+		}
+		if ("Array".equalsIgnoreCase(returnValue)) {
+			return "[?]";
+		}
+		if ("Function".equalsIgnoreCase(returnValue)) {
+			return "?"; //"fn()";
+		}
+		return "+" + returnValue;
 	}
 
 	private JsonObject getTernClassOrPrototype(JsonObject ternClass,
-			JQueryMethod method) {
+			String name, boolean isStatic) {
 		// constructor
 		/*
 		 * if (method.isConstructor()) { return ternClass; }
 		 */
 		// static Method
-		if (method.isStaticMethod()) {
+		if (isStatic) {
 			JsonObject staticMethod = new JsonObject();
-			ternClass.set(method.getName(), staticMethod);
+			ternClass.set(name, staticMethod);
 			return staticMethod;
 		}
 		JsonObject prototype = (JsonObject) ternClass.get("prototype");
@@ -128,7 +149,7 @@ public class TernDefJQueryApiHandler extends AbstractJQueryApiHandler {
 			ternClass.set("prototype", prototype);
 		}
 		JsonObject prototypeMethod = new JsonObject();
-		prototype.set(method.getName(), prototypeMethod);
+		prototype.set(name, prototypeMethod);
 		return prototypeMethod;
 	}
 
@@ -148,4 +169,28 @@ public class TernDefJQueryApiHandler extends AbstractJQueryApiHandler {
 		return parent;
 	}
 
+	@Override
+	public void handleProperty(JQueryProperty property) {
+		JsonObject ternItem = getTernClassOrPrototype(ternClass,
+				property.getName(), property.isStaticProperty());
+		String type = getType(property);
+		if (!StringUtils.isEmpty(type)) {
+			ternItem.set("!type", type);
+		}
+		String doc = property.getDescription();
+		String url = property.getUrl();
+		addDocAndUrl(ternItem, doc, url);
+	}
+
+	private String getType(JQueryProperty property) {
+		Collection<String> types = property.getTypes();
+		StringBuilder ternTypes = new StringBuilder();
+		for (String type : types) {
+			if (ternTypes.length() > 0) {
+				ternTypes.append("|");
+			}
+			ternTypes.append(getType(type));
+		}
+		return ternTypes.toString();
+	}
 }

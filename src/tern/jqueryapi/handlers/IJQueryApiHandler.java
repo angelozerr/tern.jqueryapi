@@ -3,6 +3,7 @@ package tern.jqueryapi.handlers;
 import java.io.IOException;
 
 import tern.jqueryapi.JQueryMethod;
+import tern.jqueryapi.JQueryProperty;
 
 public interface IJQueryApiHandler {
 
@@ -17,4 +18,5 @@ public interface IJQueryApiHandler {
 
 	void handleMethod(JQueryMethod method);
 
+	void handleProperty(JQueryProperty property);
 }

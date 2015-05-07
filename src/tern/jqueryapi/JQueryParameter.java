@@ -34,7 +34,7 @@ public class JQueryParameter {
 
 	private String getType(String type) {
 		// TODO Auto-generated method stub
-		return null;
+		return type;
 	}
 
 

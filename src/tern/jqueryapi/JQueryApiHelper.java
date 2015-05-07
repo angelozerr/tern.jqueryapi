@@ -33,7 +33,11 @@ public class JQueryApiHelper {
 			visitor.startClass(clazz.getClassName(), clazz.getSuperClass(),
 					clazz.isPrivateClass(), clazz.getDescription(),
 					clazz.getUrl());
-
+			// Loop for properties
+			Collection<JQueryProperty> properties = clazz.getProperties();
+			for (JQueryProperty property : properties) {
+				visitor.handleProperty(property);
+			}
 			// Loop for methods
 			Collection<JQueryMethod> methods = clazz.getMethods();
 			for (JQueryMethod method : methods) {

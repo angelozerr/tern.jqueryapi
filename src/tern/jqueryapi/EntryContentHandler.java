@@ -4,14 +4,18 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import tern.jqueryapi.utils.StringUtils;
+
 public class EntryContentHandler extends DefaultHandler {
 
 	private final JQueryApi api;
 	private StringBuilder desc;
 	private JQueryClass clazz;
+	private JQueryClass clazzOption;
 
 	private JQueryItem itemToUpdateForDesc;
 	private JQueryMethod method;
+	private JQueryProperty property;
 
 	public EntryContentHandler(JQueryApi api) {
 		this.api = api;
@@ -42,6 +46,13 @@ public class EntryContentHandler extends DefaultHandler {
 					String methodName = entryName;
 					String returnValue = "this";
 					method = new JQueryMethod(methodName, returnValue, true);
+
+					String optionName = methodName + "Option";
+					clazzOption = getClass(optionName, null, false, true);
+
+					method.addParameter(new JQueryParameter("options",
+							optionName, true));
+
 					clazz.addMethod(method);
 					itemToUpdateForDesc = method;
 
@@ -57,13 +68,18 @@ public class EntryContentHandler extends DefaultHandler {
 			} else if ("selector".equals(entryType)) {
 
 			}
-
-			// clazz = getClass(entryName, entryType);
 		} else if ("desc".equalsIgnoreCase(name)) {
 			this.desc = new StringBuilder();
 		} else if ("option".equalsIgnoreCase(name)) {
-			if (method != null) {
-				System.err.println(method);
+			this.property = new JQueryProperty(attributes.getValue("name"),
+					true);
+			String type = attributes.getValue("type");
+			if (!StringUtils.isEmpty(type)) {
+				property.addType(type);
+			}
+		} else if ("type".equalsIgnoreCase(name)) {
+			if (property != null) {
+				property.addType(attributes.getValue("name"));
 			}
 		}
 		super.startElement(uri, localName, name, attributes);
@@ -93,11 +109,22 @@ public class EntryContentHandler extends DefaultHandler {
 	public void endElement(String uri, String localName, String name)
 			throws SAXException {
 		if ("desc".equalsIgnoreCase(name)) {
-			if (itemToUpdateForDesc != null) {
+			if (property != null) {
+				if (property.getDescription() == null) {
+					property.setDescription(desc.toString());
+				}
+			} else if (itemToUpdateForDesc != null) {
 				itemToUpdateForDesc.setDescription(desc.toString());
 				itemToUpdateForDesc = null;
 			}
+
 			desc = null;
+		}
+		if ("option".equalsIgnoreCase(name)) {
+			if (clazzOption != null) {
+				clazzOption.addProperty(property);
+			}
+			this.property = null;
 		}
 		super.endElement(uri, localName, name);
 	}

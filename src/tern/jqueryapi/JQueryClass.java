@@ -10,6 +10,7 @@ public class JQueryClass extends JQueryItem {
 	private final boolean privateClass;
 	private final String superClass;
 	private final Collection<JQueryMethod> methods;
+	private final Collection<JQueryProperty> properties;
 
 	public JQueryClass(String className, String superClass,
 			boolean objectLiteral, boolean privateClass) {
@@ -18,6 +19,7 @@ public class JQueryClass extends JQueryItem {
 		this.objectLiteral = objectLiteral;
 		this.privateClass = privateClass;
 		this.methods = new ArrayList<JQueryMethod>();
+		this.properties = new ArrayList<JQueryProperty>();
 	}
 
 	public String getClassName() {
@@ -39,13 +41,21 @@ public class JQueryClass extends JQueryItem {
 	public String getUrl() {
 		return null;
 	}
-	
+
 	public void addMethod(JQueryMethod method) {
 		methods.add(method);
 	}
-	
+
 	public Collection<JQueryMethod> getMethods() {
 		return methods;
 	}
-	
+
+	public void addProperty(JQueryProperty property) {
+		properties.add(property);
+	}
+
+	public Collection<JQueryProperty> getProperties() {
+		return properties;
+	}
+
 }
