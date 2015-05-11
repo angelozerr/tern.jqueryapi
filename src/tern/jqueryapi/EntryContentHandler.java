@@ -15,6 +15,7 @@ public class EntryContentHandler extends DefaultHandler {
 
 	private JQueryItem itemToUpdateForDesc;
 	private JQueryMethod method;
+	private JQueryMethod methodSignature;
 	private JQueryProperty property;
 
 	public EntryContentHandler(JQueryApi api) {
@@ -45,20 +46,23 @@ public class EntryContentHandler extends DefaultHandler {
 					JQueryClass clazz = getClass(className, null, false, false);
 					String methodName = entryName;
 					String returnValue = "this";
-					method = new JQueryMethod(methodName, returnValue, true);
+					method = clazz.addMethod(new JQueryMethod(methodName,
+							returnValue, true));
 
 					String optionName = methodName + "Option";
 					clazzOption = getClass(optionName, null, false, true);
 
 					method.addParameter(new JQueryParameter("options",
 							optionName, true));
-
-					clazz.addMethod(method);
 					itemToUpdateForDesc = method;
-
 				}
 			} else if ("method".equals(entryType)) {
-
+				String className = (after == null) ? "jQuery.fn" : before;
+				JQueryClass clazz = getClass(className, null, false, false);
+				String methodName = entryName;
+				method = clazz
+						.addMethod(new JQueryMethod(methodName, "", true));
+				itemToUpdateForDesc = method;
 			} else if ("property".equals(entryType)) {
 
 			} else if ("widget".equals(entryType)) {
@@ -80,6 +84,17 @@ public class EntryContentHandler extends DefaultHandler {
 		} else if ("type".equalsIgnoreCase(name)) {
 			if (property != null) {
 				property.addType(attributes.getValue("name"));
+			}
+		} else if ("signature".equalsIgnoreCase(name)) {
+			if (method != null && method.getParameters().size() < 1) {
+				methodSignature = method;
+			}
+		} else if ("argument".equalsIgnoreCase(name)) {
+			if (methodSignature != null) {
+				String paramName = attributes.getValue("name");
+				String paramType = attributes.getValue("type");
+				methodSignature.addParameter(new JQueryParameter(paramName,
+						paramType, false));
 			}
 		}
 		super.startElement(uri, localName, name, attributes);
@@ -108,7 +123,9 @@ public class EntryContentHandler extends DefaultHandler {
 	@Override
 	public void endElement(String uri, String localName, String name)
 			throws SAXException {
-		if ("desc".equalsIgnoreCase(name)) {
+		if ("entry".equalsIgnoreCase(name)) {
+			reset();
+		} else if ("desc".equalsIgnoreCase(name)) {
 			if (property != null) {
 				if (property.getDescription() == null) {
 					property.setDescription(desc.toString());
@@ -125,8 +142,16 @@ public class EntryContentHandler extends DefaultHandler {
 				clazzOption.addProperty(property);
 			}
 			this.property = null;
+		} else if ("signature".equalsIgnoreCase(name)) {
+			methodSignature = null;
 		}
 		super.endElement(uri, localName, name);
+	}
+
+	private void reset() {
+		methodSignature = null;
+		method = null;
+		clazzOption = null;
 	}
 
 	public void characters(char[] ch, int start, int length)

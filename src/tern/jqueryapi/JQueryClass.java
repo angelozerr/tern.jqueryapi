@@ -42,8 +42,9 @@ public class JQueryClass extends JQueryItem {
 		return null;
 	}
 
-	public void addMethod(JQueryMethod method) {
+	public JQueryMethod addMethod(JQueryMethod method) {
 		methods.add(method);
+		return method;
 	}
 
 	public Collection<JQueryMethod> getMethods() {

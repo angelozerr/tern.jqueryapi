@@ -1,0 +1,35 @@
+{
+  "name": "api.jquerymobile.com",
+  "title": "jQuery Mobile API Docs",
+  "description": "API reference documentation for jQuery Mobile.",
+  "version": "1.4.8",
+  "homepage": "https://github.com/jquery/api.jquerymobile.com",
+  "author": "jQuery Foundation (http://jquery.org/)",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jquery/api.jquerymobile.com.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jquery/api.jquerymobile.com/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/MIT"
+    }
+  ],
+  "dependencies": {
+    "grunt": "0.3.17",
+    "grunt-clean": "0.3.0",
+    "grunt-wordpress": "1.1.0",
+    "grunt-jquery-content": "0.12.1",
+    "grunt-check-modules": "0.1.0",
+    "grunt-contrib-watch": "0.1.4"
+  },
+  "devDependencies": {},
+  "keywords": [],
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}

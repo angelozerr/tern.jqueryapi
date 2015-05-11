@@ -1,17 +1,20 @@
 package main;
 
-import java.io.File;
 import java.io.IOException;
 
-import tern.jqueryapi.JQueryApi;
-import tern.jqueryapi.JQueryApiHelper;
-import tern.jqueryapi.handlers.TernDefJQueryApiHandler;
+import tern.jqueryapi.generator.JQueryUIPluginGeneratorHelper;
 
 public class Generate {
 
 	public static void main(String[] args) throws IOException {
-		File basedir = new File("api/jquery-ui/1-12");
-		JQueryApi api = JQueryApiHelper.load("jquery-ui", "1-12", basedir);
-		JQueryApiHelper.visit(api, new TernDefJQueryApiHandler(System.out));
+
+		String plugin = JQueryUIPluginGeneratorHelper.generateFile("jquery-ui",
+				"1-12");
+		System.err.println(plugin);
+		
+		
+		String mobile = JQueryUIPluginGeneratorHelper.generateFile("jquery-mobile",
+				"1.5");
+		System.err.println(mobile);
 	}
 }
