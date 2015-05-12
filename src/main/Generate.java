@@ -2,6 +2,7 @@ package main;
 
 import java.io.IOException;
 
+import tern.jqueryapi.generator.JQueryMobilePluginGeneratorHelper;
 import tern.jqueryapi.generator.JQueryUIPluginGeneratorHelper;
 
 public class Generate {
@@ -11,10 +12,9 @@ public class Generate {
 		String plugin = JQueryUIPluginGeneratorHelper.generateFile("jquery-ui",
 				"1-12");
 		System.err.println(plugin);
-		
-		
-		String mobile = JQueryUIPluginGeneratorHelper.generateFile("jquery-mobile",
-				"1.5");
+
+		String mobile = JQueryMobilePluginGeneratorHelper.generateFile(
+				"jquery-mobile", "1.5");
 		System.err.println(mobile);
 	}
 }

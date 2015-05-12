@@ -107,13 +107,17 @@ public class TernDefJQueryApiHandler extends AbstractJQueryApiHandler {
 	}
 
 	private String getType(String returnValue) {
+		if (StringUtils.isEmpty(returnValue)) {
+			return null;
+		}
 		if ("this".equals(returnValue)) {
 			return "!this";
 		}
 		if ("Boolean".equalsIgnoreCase(returnValue)) {
 			return "bool";
 		}
-		if ("Number".equalsIgnoreCase(returnValue) || "Integer".equalsIgnoreCase(returnValue)) {
+		if ("Number".equalsIgnoreCase(returnValue)
+				|| "Integer".equalsIgnoreCase(returnValue)) {
 			return "number";
 		}
 		if ("String".equalsIgnoreCase(returnValue)) {
@@ -126,9 +130,9 @@ public class TernDefJQueryApiHandler extends AbstractJQueryApiHandler {
 			return "[?]";
 		}
 		if ("Function".equalsIgnoreCase(returnValue)) {
-			return "?"; //"fn()";
+			return "?"; // "fn()";
 		}
-		return "+" + returnValue;
+		return "+" + returnValue.replaceAll("-", "_");
 	}
 
 	private JsonObject getTernClassOrPrototype(JsonObject ternClass,

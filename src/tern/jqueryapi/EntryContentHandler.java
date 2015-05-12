@@ -83,7 +83,13 @@ public class EntryContentHandler extends DefaultHandler {
 			}
 		} else if ("type".equalsIgnoreCase(name)) {
 			if (property != null) {
-				property.addType(attributes.getValue("name"));
+				String type = attributes.getValue("name");
+				if (StringUtils.isEmpty(type)) {
+					type = attributes.getValue("nmae");
+				}
+				if (!StringUtils.isEmpty(type)) {
+					property.addType(type);
+				}
 			}
 		} else if ("signature".equalsIgnoreCase(name)) {
 			if (method != null && method.getParameters().size() < 1) {
