@@ -3,15 +3,18 @@ package tern.jqueryapi.handlers;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.util.Collection;
 import java.util.List;
 
+import tern.jqueryapi.FunctionType;
+import tern.jqueryapi.IType;
 import tern.jqueryapi.JQueryMethod;
 import tern.jqueryapi.JQueryParameter;
 import tern.jqueryapi.JQueryProperty;
+import tern.jqueryapi.SimpleType;
 import tern.jqueryapi.utils.StringUtils;
 
 import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.WriterConfig;
 
 public class TernDefJQueryApiHandler extends AbstractJQueryApiHandler {
 
@@ -38,7 +41,8 @@ public class TernDefJQueryApiHandler extends AbstractJQueryApiHandler {
 
 	@Override
 	public void endApi() throws IOException {
-		write(def.toString());
+		// write(def.toString());
+		def.writeTo(getWriter(), WriterConfig.PRETTY_PRINT);
 	}
 
 	@Override
@@ -93,23 +97,34 @@ public class TernDefJQueryApiHandler extends AbstractJQueryApiHandler {
 				type.append("?");
 			}
 			type.append(": ");
-			type.append(getType(parameter.getType()));
-
+			type.append(getType(parameter.getTypes(), false,
+					parameter.hasSeveralTypesWithFn()));
 		}
 
 		type.append(")");
 		if (method.hasReturnValue()) {
-			String returnValue = method.getReturnValue();
+			IType returnValue = method.getReturnValue();
 			type.append(" -> ");
 			type.append(getType(returnValue));
 		}
 		return type.toString();
 	}
 
-	private String getType(String returnValue) {
-		if (StringUtils.isEmpty(returnValue)) {
+	private String getType(IType returnValue) {
+		if (returnValue == null) {
 			return null;
 		}
+		if (returnValue instanceof SimpleType) {
+			return getType((SimpleType) returnValue);
+		}
+		if (returnValue instanceof FunctionType) {
+			return getType((JQueryMethod) returnValue);
+		}
+		return null;
+	}
+
+	private String getType(SimpleType t) {
+		String returnValue = t.getType();
 		if ("this".equals(returnValue)) {
 			return "!this";
 		}
@@ -177,7 +192,8 @@ public class TernDefJQueryApiHandler extends AbstractJQueryApiHandler {
 	public void handleProperty(JQueryProperty property) {
 		JsonObject ternItem = getTernClassOrPrototype(ternClass,
 				property.getName(), property.isStaticProperty());
-		String type = getType(property);
+		String type = getType(property.getTypes(), true,
+				property.hasSeveralTypesWithFn());
 		if (!StringUtils.isEmpty(type)) {
 			ternItem.set("!type", type);
 		}
@@ -186,14 +202,20 @@ public class TernDefJQueryApiHandler extends AbstractJQueryApiHandler {
 		addDocAndUrl(ternItem, doc, url);
 	}
 
-	private String getType(JQueryProperty property) {
-		Collection<String> types = property.getTypes();
+	private String getType(List<IType> types, boolean returnNull,
+			boolean hasSeveralTypesWithFn) {
 		StringBuilder ternTypes = new StringBuilder();
-		for (String type : types) {
+		for (IType type : types) {
 			if (ternTypes.length() > 0) {
 				ternTypes.append("|");
 			}
 			ternTypes.append(getType(type));
+			if (hasSeveralTypesWithFn) {
+				break;
+			}
+		}
+		if (ternTypes.length() == 0 && !returnNull) {
+			return "?";
 		}
 		return ternTypes.toString();
 	}

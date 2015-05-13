@@ -1,4 +1,7 @@
-<%@ jet package="tern.jqueryapi.generator" class="JQueryUIPluginGenerator" skeleton="generator.skeleton" %>
+<%@ jet package="tern.jqueryapi.generator.jqueryui" 
+		class="JQueryUIPluginGenerator"
+		imports="tern.jqueryapi.generator.TernPluginOptions" 
+		skeleton="generator.skeleton" %>
 <% TernPluginOptions options = argument; %>
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS

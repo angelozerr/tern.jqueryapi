@@ -9,6 +9,8 @@ import tern.jqueryapi.utils.StringUtils;
 public class EntryContentHandler extends DefaultHandler {
 
 	private final JQueryApi api;
+	private final String filename;
+
 	private StringBuilder desc;
 	private JQueryClass clazz;
 	private JQueryClass clazzOption;
@@ -17,9 +19,13 @@ public class EntryContentHandler extends DefaultHandler {
 	private JQueryMethod method;
 	private JQueryMethod methodSignature;
 	private JQueryProperty property;
+	private JQueryParameter parameter;
+	private FunctionType functionType;
 
-	public EntryContentHandler(JQueryApi api) {
+	public EntryContentHandler(JQueryApi api, String filename) {
 		this.api = api;
+		this.filename = filename;
+		System.err.println(filename);
 	}
 
 	@Override
@@ -52,14 +58,17 @@ public class EntryContentHandler extends DefaultHandler {
 					String optionName = methodName + "Option";
 					clazzOption = getClass(optionName, null, false, true);
 
-					method.addParameter(new JQueryParameter("options",
-							optionName, true));
+					JQueryParameter parameter = new JQueryParameter("options",
+							true);
+					parameter.addType(new SimpleType(optionName));
+					method.addParameter(parameter);
 					itemToUpdateForDesc = method;
 				}
 			} else if ("method".equals(entryType)) {
-				String className = (after == null) ? "jQuery.fn" : before;
-				JQueryClass clazz = getClass(className, null, false, false);
-				String methodName = entryName;
+				ClassInfo classInfo = getClassInfo(before, after, filename);
+				JQueryClass clazz = getClass(classInfo.getName(), null, false,
+						classInfo.isPrivate());
+				String methodName = after == null ? entryName : after;
 				method = clazz
 						.addMethod(new JQueryMethod(methodName, "", true));
 				itemToUpdateForDesc = method;
@@ -79,16 +88,24 @@ public class EntryContentHandler extends DefaultHandler {
 					true);
 			String type = attributes.getValue("type");
 			if (!StringUtils.isEmpty(type)) {
-				property.addType(type);
+				property.addType(JQueryApiHelper.createType(type));
 			}
 		} else if ("type".equalsIgnoreCase(name)) {
-			if (property != null) {
+			if (property != null || parameter != null) {
 				String type = attributes.getValue("name");
 				if (StringUtils.isEmpty(type)) {
 					type = attributes.getValue("nmae");
 				}
 				if (!StringUtils.isEmpty(type)) {
-					property.addType(type);
+					IType t = JQueryApiHelper.createType(type);
+					if (property != null) {
+						property.addType(t);
+					} else {
+						parameter.addType(t);
+					}
+					if (t instanceof FunctionType) {
+						functionType = (FunctionType) t;
+					}
 				}
 			}
 		} else if ("signature".equalsIgnoreCase(name)) {
@@ -96,14 +113,28 @@ public class EntryContentHandler extends DefaultHandler {
 				methodSignature = method;
 			}
 		} else if ("argument".equalsIgnoreCase(name)) {
-			if (methodSignature != null) {
+			if (methodSignature != null || functionType != null) {
 				String paramName = attributes.getValue("name");
-				String paramType = attributes.getValue("type");
-				methodSignature.addParameter(new JQueryParameter(paramName,
-						paramType, false));
+				parameter = new JQueryParameter(paramName, false);
+				IType paramType = JQueryApiHelper.createType(attributes
+						.getValue("type"));
+				if (paramType != null) {
+					parameter.addType(paramType);
+				}
+				if (functionType != null) {
+					functionType.addParameter(parameter);
+				} else {
+					methodSignature.addParameter(parameter);
+				}
 			}
 		}
 		super.startElement(uri, localName, name, attributes);
+	}
+
+	protected ClassInfo getClassInfo(String before, String after,
+			String filename) {
+		String className = (after == null) ? "jQuery.fn" : before;
+		return new ClassInfo(className, false);
 	}
 
 	public JQueryClass getClass(String className, String superClass,
@@ -150,6 +181,9 @@ public class EntryContentHandler extends DefaultHandler {
 			this.property = null;
 		} else if ("signature".equalsIgnoreCase(name)) {
 			methodSignature = null;
+		} else if ("argument".equalsIgnoreCase(name)) {
+			parameter = null;
+			functionType = null;
 		}
 		super.endElement(uri, localName, name);
 	}

@@ -10,12 +10,12 @@ public class JQueryMethod extends JQueryItem {
 	private final String name;
 	private final boolean staticMethod;
 	private final List<JQueryParameter> parameters;
-	private String returnValue;
+	private IType returnValue;
 
 	public JQueryMethod(String name, String returnValue, boolean staticMethod) {
 		this.name = name;
 		this.parameters = new ArrayList<JQueryParameter>();
-		this.returnValue = returnValue;
+		this.returnValue = null;//returnValue;
 		this.staticMethod = staticMethod;
 	}
 
@@ -28,15 +28,14 @@ public class JQueryMethod extends JQueryItem {
 	}
 
 	public String getUrl() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public boolean hasReturnValue() {
-		return !StringUtils.isEmpty(returnValue);
+		return returnValue != null;
 	}
 
-	public String getReturnValue() {
+	public IType getReturnValue() {
 		return returnValue;
 	}
 

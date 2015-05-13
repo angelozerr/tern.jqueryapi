@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="../entries2html.xsl" ?>
+<entry type="property" name="QUnit.config">
+	<title>QUnit.config</title>
+	<signature>
+		<property name="altertitle" type="Boolean" default="true">
+			<desc>
+				By default, QUnit updates document.title to add a checkmark or x-mark to indicate if a testsuite passed or failed. This makes it easy to see a suites result even without looking at a tab's content.
+				<p>If you're dealing with code that tests <code>document.title</code> changes or have some other problem with this feature, set this option to false to disable it.</p>
+			</desc>
+		</property>
+		<property name="autostart" type="Boolean" default="true">
+			<desc>
+				By default, QUnit runs tests when <code>load</code> event is triggered on the <code>window</code>. If you're loading tests asynchronously, you can set this property to <code>false</code>, then call <code>QUnit.start()</code> once everything is loaded. See below for an example.
+			</desc>
+		</property>
+		<property name="current" type="Object">
+			<desc>
+				This object isn't actually a configuration property, but is listed here anyway, as its exported through <code>QUnit.config</code>. This gives you access to some QUnit internals at runtime. See below for an example.
+			</desc>
+		</property>
+		<property name="hidepassed" type="Boolean" default="false">
+			<desc>
+				By default, the HTML Reporter will show all the tests results. Enabling this option will make it show only the failing tests, hiding all that pass. This can also be managed by the HTML interface.
+			</desc>
+		</property>
+		<property name="moduleFilter" type="String" default="undefined">
+			<desc>
+				Specify a single module to run by declaring its name. By default, QUnit will run all the loaded modules when this property is not specified. This property value must match (case insensitive) the module name or QUnit won't run any module.
+				<p>Prior to version 1.16.0, this property was called <code>module</code>.</p>
+			</desc>
+		</property>
+		<property name="reorder" type="Boolean" default="true">
+			<desc>
+				By default, QUnit will run tests first that failed on a previous run. In a large testsuite, this can speed up testing a lot.
+				<p>It can also lead to random errors, in case your testsuite has non-atomic tests, where the order is important. You should fix those issues, instead of disabling reordering!</p>
+				<p>When a failed test is running first, <code>Rerunning previously failed test</code> is displayed in the summary whereas just <code>Running</code> is displayed otherwise.</p>
+			</desc>
+		</property>
+		<property name="requireExpects" type="Boolean" default="false">
+			<desc>
+				The <code>expect()</code> method is optional by default, though it can be useful to require each test to specify the number of expected assertions.
+				<p>Enabling this option will cause tests to fail, if they don't call <code>expect()</code> at all.</p>
+			</desc>
+		</property>
+		<property name="testId" type="Array" default="undefined">
+			<desc>
+				This property allows QUnit to run specific test blocks by a hashed string combining their module name and test name. You can specify one or multiple tests to run.
+			</desc>
+		</property>
+		<property name="testTimeout" type="Number" default="undefined">
+			<desc>
+				Specify a global timeout in milliseconds after which all tests will fail with an appropriate message. Useful when async tests aren't finishing, to prevent the testrunner getting stuck. Set to something high, e.g. 30000 (30 seconds) to avoid slow tests to time out by accident.
+			</desc>
+		</property>
+		<property name="scrolltop" type="Boolean" default="true">
+			<desc>
+				By default, scroll to top of the page when suite is done. Setting this to false will leave the page scroll alone.
+			</desc>
+		</property>
+		<property name="urlConfig" type="Array">
+			<desc>
+				This property controls which form controls to put into the QUnit toolbar element (below the header). By default, the "noglobals" and "notrycatch" checkboxes are there. By extending this array, you can add your own checkboxes and select lists.
+				<p>Each element should be an object with an <code>id</code> property (used as the config and query-string key) and a <code>label</code> property (used as text in the UI), and optionally a <code>tooltip</code> property (used as the 	title attribute to explain what the control does). Each element should also have a <code>value</code> property controlling available options and rendering.</p>
+				<p>If <code>value</code> is undefined, the option will render as a checkbox. The corresponding URL parameter will be set to "true" when the checkbox is checked, and otherwise will be absent.</p>
+				<p>If <code>value</code> is a string, the option will render as a checkbox. The corresponding URL parameter will be set to the string when the checkbox is checked, and otherwise will be absent.</p>
+				<p>If <code>value</code> is an array, the option will render as a select-one with an empty first option, followed by an option for each element of the array, with text and value matching the element. The corresponding URL parameter will be absent when the empty option is selected, and otherwise will be set to the value of the selected array element.</p>
+				<p>If <code>value</code> is an object, the option will render as a select-one with an empty first option, followed by an option for each property of the object, with text and value matching the name and value (respectively) of the property. The corresponding URL parameter will be absent when the empty option is selected, and otherwise will be set to the value of the selected object property.</p>
+				<p>See also the two examples below.</p>
+			</desc>
+		</property>
+	</signature>
+	<desc>Configuration for QUnit</desc>
+	<longdesc>
+		<p>QUnit has a bunch of internal configuration defaults, some of which are useful to override. Check the description for each option for details.</p>
+	</longdesc>
+	<example>
+		<desc>Disable autostart, useful when loading tests asynchronsly, here using requirejs:</desc>
+<code><![CDATA[
+QUnit.config.autostart = false;
+require(
+	[ "tests/testModule1", "tests/testModule2" ],
+	function() {
+		QUnit.start();
+	}
+);
+]]></code>
+	</example>
+	<example>
+		<desc>Access <code>QUnit.config.current.testName</code> to pass the current test's name on to another tool</desc>
+<code><![CDATA[
+QUnit.test("some test", function() {
+	// a few regular assertions
+	// then a call to another tool
+	speedTest( QUnit.config.current.testName, codeUnderTest );
+});
+]]></code>
+	</example>
+	<example>
+		<desc>Add a new checkbox to the toolbar, using the <code>urlConfig</code> property. This assumes there's other code on the page that will check the <code>QUnit.config.min</code> property to react to the selection.</desc>
+<code><![CDATA[
+QUnit.config.urlConfig.push({
+	id: "min",
+	label: "Minified source",
+	tooltip: "Load minified source files instead of the regular unminified ones."
+});
+]]></code>
+	</example>
+	<example>
+		<desc>Add a dropdown to the toolbar, using the <code>urlConfig</code> property. This assumes there's other code on the page that will check the <code>QUnit.config.jquery</code> property to react to the selection, loading the appropiate jQuery Core version.</desc>
+<code><![CDATA[
+QUnit.config.urlConfig.push({
+	id: "jquery",
+	label: "jQuery version",
+	value: [ "1.7.2", "1.8.3", "1.9.1" ],
+	tooltip: "What jQuery Core version to test against"
+});
+]]></code>
+	</example>
+	<category slug="config"/>
+</entry>

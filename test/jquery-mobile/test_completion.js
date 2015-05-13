@@ -7,7 +7,7 @@ exports['test jQuery Mobile completion'] = function() {
 	    "isProperty":true,
 	    "isObjectKey":false,
 	    "completions":[{"name":"button","type":"fn(options?: {})","origin":"jquery-ui1-12"},
-	                   {"name":"buttonMarkup","type":"fn(options: ?, overwriteClasses: ?)","origin":"jquery-mobile1.5"},
+	                   {"name":"buttonMarkup","type":"fn(options: bool|string, overwriteClasses: bool)","origin":"jquery-mobile1.5"},
 	                   {"name":"buttonset","type":"fn(options?: {})","origin":"jquery-ui1-12"}]
 	});
 }

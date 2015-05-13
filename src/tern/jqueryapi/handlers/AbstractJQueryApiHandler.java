@@ -27,4 +27,7 @@ public abstract class AbstractJQueryApiHandler implements IJQueryApiHandler {
 		}
 	}
 
+	public Writer getWriter() {
+		return writer;
+	}
 }

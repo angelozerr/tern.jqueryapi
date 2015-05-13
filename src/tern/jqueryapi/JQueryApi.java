@@ -2,7 +2,6 @@ package tern.jqueryapi;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,15 +18,18 @@ public class JQueryApi {
 	private final String name;
 	private final String version;
 	private final Map<String, JQueryClass> classes;
+	private final IEntryContentHandlerFactory factory;
 
-	public JQueryApi(String name, String version) {
+	public JQueryApi(String name, String version,
+			IEntryContentHandlerFactory factory) {
 		this.name = name;
 		this.version = version;
+		this.factory = factory;
 		this.classes = new HashMap<String, JQueryClass>();
 	}
 
-	public void loadEntry(InputStream in) throws SAXException, IOException,
-			ParserConfigurationException {
+	public void loadEntry(InputStream in, String filename) throws SAXException,
+			IOException, ParserConfigurationException {
 		SAXParser saxReader = SAXParserFactory.newInstance().newSAXParser();
 		// set the feature like explained in documentation :
 		// http://nekohtml.sourceforge.net/faq.html#fragments
@@ -36,7 +38,7 @@ public class JQueryApi {
 		 * "http://cyberneko.org/html/features/balance-tags/document-fragment",
 		 * true);
 		 */
-		EntryContentHandler handler = new EntryContentHandler(this);
+		EntryContentHandler handler = factory.create(this, filename);
 		// saxReader.setContentHandler(handler);
 		saxReader.parse(new InputSource(in), handler);
 	}

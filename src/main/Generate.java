@@ -2,8 +2,9 @@ package main;
 
 import java.io.IOException;
 
-import tern.jqueryapi.generator.JQueryMobilePluginGeneratorHelper;
-import tern.jqueryapi.generator.JQueryUIPluginGeneratorHelper;
+import tern.jqueryapi.generator.jquerymobile.JQueryMobilePluginGeneratorHelper;
+import tern.jqueryapi.generator.jqueryui.JQueryUIPluginGeneratorHelper;
+import tern.jqueryapi.generator.qunit.QUnitPluginGeneratorHelper;
 
 public class Generate {
 
@@ -16,5 +17,9 @@ public class Generate {
 		String mobile = JQueryMobilePluginGeneratorHelper.generateFile(
 				"jquery-mobile", "1.5");
 		System.err.println(mobile);
+		
+		String qunit = QUnitPluginGeneratorHelper.generateFile(
+				"qunit", "1-19");
+		System.err.println(qunit);
 	}
 }

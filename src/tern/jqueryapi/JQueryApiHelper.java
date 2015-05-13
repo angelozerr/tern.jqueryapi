@@ -6,17 +6,21 @@ import java.io.IOException;
 import java.util.Collection;
 
 import tern.jqueryapi.handlers.IJQueryApiHandler;
+import tern.jqueryapi.utils.StringUtils;
 
 public class JQueryApiHelper {
 
-	public static JQueryApi load(String name, String version, File baseDir)
-			throws IOException {
-		JQueryApi api = new JQueryApi(name, version);
+	public static JQueryApi load(String name, String version, File baseDir,
+			IEntryContentHandlerFactory factory) throws IOException {
+		JQueryApi api = new JQueryApi(name, version, factory);
 		File entriesDir = new File(baseDir, "entries");
 		File[] entriesFiles = entriesDir.listFiles();
+		File entryFile = null;
 		for (int i = 0; i < entriesFiles.length; i++) {
+			entryFile = entriesFiles[i];
 			try {
-				api.loadEntry(new FileInputStream(entriesFiles[i]));
+				api.loadEntry(new FileInputStream(entriesFiles[i]),
+						entryFile.getName());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -49,4 +53,13 @@ public class JQueryApiHelper {
 		visitor.endApi();
 	}
 
+	public static IType createType(String type) {
+		if (StringUtils.isEmpty(type)) {
+			return null;
+		}
+		if ("Function".equalsIgnoreCase(type)) {
+			return new FunctionType("", "");
+		}
+		return new SimpleType(type);
+	}
 }

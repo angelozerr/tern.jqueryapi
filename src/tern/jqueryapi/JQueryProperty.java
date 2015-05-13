@@ -1,29 +1,29 @@
 package tern.jqueryapi;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 public class JQueryProperty extends JQueryItem {
 
 	private final String name;
 	private final boolean staticProperty;
-	private final Collection<String> types;
+	private final List<IType> types;
 
 	public JQueryProperty(String name, boolean staticProperty) {
 		this.name = name;
 		this.staticProperty = staticProperty;
-		this.types = new ArrayList<String>();
+		this.types = new ArrayList<IType>();
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void addType(String type) {
+	public void addType(IType type) {
 		this.types.add(type);
 	}
 
-	public Collection<String> getTypes() {
+	public List<IType> getTypes() {
 		return types;
 	}
 
@@ -34,5 +34,14 @@ public class JQueryProperty extends JQueryItem {
 	public String getUrl() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public boolean hasSeveralTypesWithFn() {
+		for (IType type : types) {
+			if (type instanceof FunctionType) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
